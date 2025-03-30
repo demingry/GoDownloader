@@ -2,6 +2,8 @@
 
 This is a tiny file Downloader written in Golang
 
+![](https://github.com/demingry/GoDownloader/blob/main/Screenshot2025-03-30.png)
+
 ## Features
 
 - Resume download -> [rfc2616](https://datatracker.ietf.org/doc/html/rfc2616)
