@@ -1,6 +1,7 @@
-package main
+package godownloader
 
 import (
+	godownloader "GoDownload"
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
@@ -19,8 +20,8 @@ type HTTPHeader struct {
 }
 
 type ErrorContext struct {
-	message    string
-	statuscode int
+	Message    string
+	Statuscode int
 }
 
 type FilePartion struct {
@@ -45,12 +46,12 @@ func FetchHTTPHeader(url string) (*HTTPHeader, *ErrorContext) {
 	client := http.Client{}
 	response, err := client.Head(url)
 	if err != nil {
-		return nil, &ErrorContext{message: err.Error(), statuscode: 100}
+		return nil, &ErrorContext{Message: err.Error(), Statuscode: 100}
 	}
 	defer response.Body.Close()
 
 	if len(response.Header) == 0 {
-		return nil, &ErrorContext{message: "[!]Cannot fetch HTTP header", statuscode: 100}
+		return nil, &ErrorContext{Message: "[!]Cannot fetch HTTP header", Statuscode: 100}
 	}
 	return &HTTPHeader{url: url, header: response.Header}, nil
 }
@@ -72,7 +73,7 @@ func IsServerAcceptedRange(httpheader *HTTPHeader) bool {
 func InitDownloadTask(httpheader *HTTPHeader) (*FileDownloadTask, *ErrorContext) {
 	contentlength, err := strconv.Atoi(httpheader.header["Content-Length"][0])
 	if err != nil {
-		return nil, &ErrorContext{message: err.Error(), statuscode: 101}
+		return nil, &ErrorContext{Message: err.Error(), Statuscode: 101}
 	}
 
 	returndownloadtask := new(FileDownloadTask)
@@ -125,7 +126,7 @@ func (task *FileDownloadTask) TaskRun() *ErrorContext {
 				return
 			}
 			partion.content = content
-			messageBuffer = append(messageBuffer, []byte(fmt.Sprintf("[!]File partion index: %v, %v-%v, received: %v\n",
+			godownloader.MessageBuffer = append(godownloader.MessageBuffer, []byte(fmt.Sprintf("[!]File partion index: %v, %v-%v, received: %v\n",
 				partion.partionID, partion.startposition, partion.endposotion, len(content))))
 		}(&task.partions[t])
 	}
@@ -139,7 +140,7 @@ func (task *FileDownloadTask) MergePartion() *ErrorContext {
 	// file, err := os.Create(filepath.Join(task.savedpath, task.filename))
 	file, err := os.Create(filepath.Join(`./`, `testfile.save`))
 	if err != nil {
-		return &ErrorContext{message: err.Error(), statuscode: 103}
+		return &ErrorContext{Message: err.Error(), Statuscode: 103}
 	}
 	defer file.Close()
 
@@ -153,15 +154,10 @@ func (task *FileDownloadTask) MergePartion() *ErrorContext {
 	}
 
 	if receivedfilesize != task.filelength {
-		return &ErrorContext{message: fmt.Sprintf("[!]File partion missed.%v:%v", task.filelength, receivedfilesize)}
+		return &ErrorContext{Message: fmt.Sprintf("[!]File partion missed.%v:%v", task.filelength, receivedfilesize)}
 	}
 
 	task.md5 = hex.EncodeToString(md5hash.Sum(nil))
 
 	return nil
-}
-
-func main() {
-
-	InitialGUIWindow()
 }

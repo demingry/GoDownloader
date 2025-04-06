@@ -8,9 +8,25 @@
   <style>
     body {
       padding-top: 50px;
+      background: linear-gradient(to right, #012432, #073e51, #0e4a63);
+      color: white;
+      min-height: 100vh;
     }
     .container {
       max-width: 500px;
+    }
+    .card {
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      color: #333;
+    }
+    .card-header {
+      background-color: #ffffff;
+      color: #676262;
+      border-bottom: none;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
     }
     #resultContainer {
       height: 200px;
@@ -19,6 +35,7 @@
       border: 1px solid #ddd;
       padding: 10px;
       margin-top: 10px;
+      color: #333;
     }
   </style>
 </head>
@@ -29,10 +46,25 @@
         <h4>GO Downloader</h4>
       </div>
       <div class="card-body">
+
+        <div class="form-group">
+          <label for="downloadType">选择下载类型：</label>
+          <select id="downloadType" class="form-control">
+            <option value="normal">普通下载</option>
+            <option value="torrent">比特链接下载</option>
+          </select>
+        </div>
+
         <div class="form-group">
           <label for="url">Enter URL:</label>
           <input type="text" id="url" class="form-control" placeholder="Enter URL here">
         </div>
+
+        <div id="torrentFileGroup" class="form-group" style="display: none;">
+          <label for="torrentFile">选择种子文件：</label>
+          <input type="file" id="torrentFile" class="form-control-file" accept=".torrent">
+        </div>
+
         <button id="confirmButton" class="btn btn-primary btn-block">Download</button>
         <hr>
         <h5>Result:</h5>
@@ -43,17 +75,20 @@
     </div>
   </div>
 
+
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   
+
   <script>
     const [urlinput, confirmButton, resultElement] = document.querySelectorAll("#url, #confirmButton, #result");
-
+    const downloadType = document.getElementById("downloadType");
     document.addEventListener("DOMContentLoaded", () => {
       confirmButton.addEventListener("click", () => {
+        const type = downloadType.value;
         const url = urlinput.value;
-        window.ParseURLAndDispatch(url).then(result => {});
+        window.Dispatch(url, type).then(result => {});
 
         setInterval(() => {
           const url = urlinput.value;
@@ -64,7 +99,25 @@
             const resultContainer = document.getElementById('resultContainer');
             resultContainer.scrollTop = resultContainer.scrollHeight;
           });
-        }, 1000); 
+        }, 666); 
+      });
+    });
+  </script>
+
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const urlGroup = document.querySelector("label[for='url']").parentElement;
+      const torrentFileGroup = document.getElementById("torrentFileGroup");
+
+      downloadType.addEventListener("change", () => {
+        if (downloadType.value === "normal") {
+          urlGroup.style.display = "block";
+          torrentFileGroup.style.display = "none";
+        } else if (downloadType.value === "torrent") {
+          urlGroup.style.display = "none";
+          torrentFileGroup.style.display = "block";
+        }
       });
     });
   </script>

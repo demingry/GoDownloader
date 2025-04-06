@@ -2,13 +2,17 @@
 
 This is a tiny file Downloader written in Golang
 
-![](https://github.com/demingry/GoDownloader/blob/main/Screenshot2025-03-30.png)
+![](https://github.com/demingry/GoDownloader/blob/main/Screenshot2025-04-06.png)
 
 ## Features
 
 - Resume download -> [rfc2616](https://datatracker.ietf.org/doc/html/rfc2616)
-- Multi thread -> goroutine
-- TODO: 1.BitTorrent download support 2.Custom goroutine number 3.io readwriter or channel in code 4.fix BUG 5.Enhance the UI experiences.
+- Multi thread -> goroutine.
+- BitTorrent download supported.
+- TODO: 1.Custom goroutine number 2.io readwriter or channel in code 3.fix BUG 4.Enhance the UI experiences.
 
 ### TIPS
-今天下午写的，还存在很多问题，不完善。
+1、并发支持不严谨，存在许多问题，需要完善。
+2、错误处理没有做，只是ErrorContext一个测试。
+3、文件结构乱，后续再整理。
+4、种子文件下载没有写完，只是测试。
